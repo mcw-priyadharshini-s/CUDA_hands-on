@@ -1,1 +1,1 @@
-Mattrix Multiplication
+Matrix Multiplication
