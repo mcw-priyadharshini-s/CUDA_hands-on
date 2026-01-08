@@ -13,16 +13,16 @@ __global__ void mat_mul(float *arr1, float *arr2, float* res, int m, int n, int 
     __shared__ float ds_a[TILE_WIDTH][TILE_WIDTH];
     __shared__ float ds_b[TILE_WIDTH][TILE_WIDTH];
 
-    for (int i = 0; i<(n-1)/TILE_WIDTH+1; i++){
+    for (int t = 0; t<(n-1)/TILE_WIDTH+1; t++){
 
         //loading the data from global memory into tiles
-        if (row<m && i*TILE_WIDTH+tx<n)
-            ds_a[ty][tx] = arr1[row*n+i*TILE_WIDTH+tx];
+        if (row<m && t*TILE_WIDTH+tx<n)
+            ds_a[ty][tx] = arr1[row*n+t*TILE_WIDTH+tx];
         else
             ds_a[ty][tx] = 0.0f;
 
-        if (i*TILE_WIDTH+ty<n && col<k)
-            ds_b[ty][tx] = arr2[(i*TILE_WIDTH+ty)*k+col];
+        if (t*TILE_WIDTH+ty<n && col<k)
+            ds_b[ty][tx] = arr2[(t*TILE_WIDTH+ty)*k+col];
         else
             ds_b[ty][tx] = 0.0f;
         
