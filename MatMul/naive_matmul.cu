@@ -30,7 +30,7 @@ int main() {
         h_a[i] = 1; 
         h_b[i] = 1;
     }
-
+ 
     int *d_a, *d_b, *d_c;
     cudaMalloc(&d_a, bytes);
     cudaMalloc(&d_b, bytes);
