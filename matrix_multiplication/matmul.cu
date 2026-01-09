@@ -1,12 +1,11 @@
 #include <iostream>
-#include <iomanip>
 #include <cuda_runtime.h>
 using namespace std;
 
 
-#define M 400
-#define K 300
-#define N 500
+#define M 1024
+#define K 1024
+#define N 1024
 
 void matmul_cpu(float *a,float *b,float *c)
 {
@@ -14,27 +13,32 @@ void matmul_cpu(float *a,float *b,float *c)
     {
         for(int j=0;j<N;j++)
         {
+            float value = 0.0f; 
             for (int k=0;k<K;k++)
             {
-                c[i*N+j]+=a[i*K+k]*b[k*N+j];
+                value+=a[i*K+k]*b[k*N+j];
             }
+            c[i*N+j]=value;
         }
     }
 }
 
 __global__ void matmul(float *a,float *b,float *c)
 {
-   int row=(blockDim.x*blockIdx.x)+threadIdx.x;
-   int col=(blockDim.y*blockIdx.y)+threadIdx.y;
+   int col=(blockDim.x*blockIdx.x)+threadIdx.x;
+   int row=(blockDim.y*blockIdx.y)+threadIdx.y;
 
    if(row<M && col<N)
    {
-    for(int k=0;k<K;k++)
-    {
-        c[row*N+col]+=a[row*K+k]*b[k*N+col];
-    }
+    float value = 0.0f; 
+
+    for(int k=0;k<K;k++) value+=a[row*K+k]*b[k*N+col];
+    
+    c[row * N + col] = value;
    }
 }
+
+
 void input_array(float *a,float *b)
 {
     int max_val=M*K;
@@ -49,45 +53,21 @@ void input_array(float *a,float *b)
     }
 }
 
-void print_array(float *a,float *b,float *c)
+
+int compare_array(float *c_gpu,float *c_cpu)
 {
-    cout<<"array a\n";
-    for(int i=0;i<M*K;i++)
-    {
-        if (i!=0 && i%K==0)
-        {
-            cout<<"\n"<<setw(6)<<a[i]<<" ";
+  for(int i=0;i<M;i++)
+  {
+    for(int j=0;j<N;j++)
+    { 
+        if (fabs(c_gpu[i*N+j] - c_cpu[i*N+j]) / fabs(c_cpu[i*N+j]) > 1e-5 ) 
+        { 
+            return false;
         }
-        else
-        {
-            cout<<setw(6)<<a[i]<<" ";
-        }
+        
     }
-    cout<<"\narray b\n";
-    for(int i=0;i<K*N;i++)
-    {
-        if (i!=0 && i%N==0)
-        {
-            cout<<"\n"<<setw(6)<<b[i]<<" ";
-        }
-        else
-        {
-            cout<<setw(6)<<b[i]<<" ";
-        }
-    }
-    cout<<"\narray c\n";
-    for(int i=0;i<M*N;i++)
-    {
-        if (i!=0 && i%N==0)
-        {
-            cout<<"\n"<<setw(6)<<c[i]<<" ";
-        }
-        else
-        {
-            cout<<setw(6)<<c[i]<<" ";
-        }
-    }
-    cout<<"\n";
+  }
+  return true;
 }
 
 int main()
@@ -99,6 +79,7 @@ int main()
     float* h_a=(float*)malloc(size_a);
     float* h_b=(float*)malloc(size_b);
     float* h_c=(float*)malloc(size_c);
+    float* h_c_cpu=(float*)malloc(size_c);
 
     input_array(h_a,h_b);
 
@@ -108,8 +89,6 @@ int main()
     
     cudaEvent_t start, stop;
     
-    
-
     //allocate memory in gpu
     cudaMalloc(&d_a,size_a);
     cudaMalloc(&d_b,size_b);
@@ -133,12 +112,10 @@ int main()
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
     cudaEventRecord(start);
-    //kernel function
 
+    //kernel function
     matmul<<<block,threads>>>(d_a,d_b,d_c);
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess)
-        cout<<"CUDA error: "<< cudaGetErrorString(err)<<"\n";
+    
     cudaEventRecord(stop);
 
     cudaEventSynchronize(stop);
@@ -147,31 +124,31 @@ int main()
     cudaEventElapsedTime(&elapsedTime,start,stop);
     cudaEventDestroy(start);
     cudaEventDestroy(stop);
-    
+
+    cudaMemcpy(h_c,d_c,size_c,cudaMemcpyDeviceToHost);
+
+    cout<<"gpu time: "<<elapsedTime<<" ms\n";
+
 
     
-
     //----------------------------------------cpu-------------------------------
     //cpu matmul function
     
     clock_t start_cpu = clock();
-    matmul_cpu(h_a,h_b,h_c);
+    matmul_cpu(h_a,h_b,h_c_cpu);
     clock_t end_cpu = clock();
 
     // calculate elapse time taken in cpu
     float cpu_time_ms =1000.0*(double)(end_cpu-start_cpu)/CLOCKS_PER_SEC;
-
+    
+    cout<<"cpu time: " << cpu_time_ms<<" ms\n";
+    
 
     //results
+    int isSame=compare_array(h_c,h_c_cpu);
+    if(isSame) cout<< "\nC array calculated in cpu and gpu matches !!!\n";
+    else cout<<"\nC array calculated in cpu and gpu doesn't matches :(\n";
     
-    cout<<"----------------------------------------cpu-------------------------------\n";
-    // print_array(h_a,h_b,h_c);
-    cout<<"cpu time: " << cpu_time_ms<<" ms\n";
-
-    cout<<"----------------------------------------gpu-------------------------------\n";
-    cudaMemcpy(h_c,d_c,size_c,cudaMemcpyDeviceToHost);
-    // print_array(h_a,h_b,h_c);
-    cout<<"gpu time: "<<elapsedTime<<" ms\n";
 
     cudaFree(d_a);
     cudaFree(d_b);
