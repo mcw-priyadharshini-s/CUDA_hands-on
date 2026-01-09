@@ -1,6 +1,6 @@
-# CUDA_hands-on
+## CUDA hands-on
 
-## Repository Structure & Branches
+### Repository Structure & Branches
 
 This repository contains **5 branches**, one for each team member
 
