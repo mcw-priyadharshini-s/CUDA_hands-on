@@ -43,6 +43,6 @@ int main(void) {
         printf("%lf\t", h_c[i]);
     
     free(h_c); free(h_b); free(h_a);
-    cudaFree(d_c); cudaFree(h_b); cudaFree(h_a);
+    cudaFree(d_c); cudaFree(d_b); cudaFree(d_a);
     return 0;    
 }
