@@ -11,7 +11,7 @@ This repository contains **5 branches**, one for each team member
 | Branch    | Contributor | Description |
 |-----------|-------------|-------------|
 | priya     | priyadharshini sathasivam | Implemented Cuda kernel **vector addition**, **matmul**, **matmul with tile**|
-| netra     | netra srinivasan | Implemented CUDA Kernels for **Vector Addition**, **Matrix Addition**, **Matrix Transpose**, **Naive MatMul**, **Tiled MatMul** |
+| netra     | netra srinivasan | Implemented CUDA Kernels for **Vector Addition**, **Matrix Addition**, **Matrix Transpose**, **Tiled Matrix Transpose**, **Naive MatMul**, **Tiled MatMul** |
 | thiru     | thiruselvan vijayakumar   | Implemented Cuda kernels for **matrix addition**, **vector addition**, **matmul**, **matmul with tile** |
 | sidd     | samuthraa siddhardh | | Implemented Cuda kernel **matmul**, **matmul with tile**, **matmul with register**|
 | subramanian | subramanian alagesan    | Implemented Cuda kernels for **matrix addition**, **vector addition**, **matmul**, **matmul with tile**     |
