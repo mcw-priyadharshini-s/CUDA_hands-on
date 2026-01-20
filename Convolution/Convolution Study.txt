@@ -1,0 +1,18 @@
+So what is convolution ?
+
+Mathematically : g(x,y) = s(-a,a)Σ t(-b,b)Σ w(s,t) f(x-s, y-t)
+while 
+(x,y) = pixel
+f = input image
+w = kernel
+g = output image
+a,b = apperture radius 
+
+It is a mathematical function which can be used to modify a input image.
+A small group pixels are processed at a single time (kernel) then this is made sure to cover the entire pixels of image.
+
+Major Applications of Convolutions :
+# Feature Extraction.
+# Image filters.
+
+Convo1D.cu = smoothen out a noise in 1D data by comparing neighbouring values.
