@@ -73,7 +73,7 @@ int main() {
     for(int i=0; i<n; i++) printf("%0.1f ", h_output[i]);
     printf("\n");
 
-    // Free memory...
+    // Free memory
     cudaFree(d_input); cudaFree(d_mask); cudaFree(d_output);
     return 0;
 }
