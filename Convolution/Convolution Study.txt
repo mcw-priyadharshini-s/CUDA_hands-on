@@ -16,3 +16,6 @@ Major Applications of Convolutions :
 # Image filters.
 
 Convo1D.cu = smoothen out a noise in 1D data by comparing neighbouring values.
+
+Feature Extraction uses a kernel to find the sudden changes in the pixel brightness intensity.
+but the implemented method uses a single channel image as input i.e Grayscale.
