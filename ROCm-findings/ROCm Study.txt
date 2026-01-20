@@ -1,0 +1,24 @@
+﻿19 January 2026
+
+What is ROCm, what is the role it is playing ?
+
+* ROCm is a software stack by AMD..
+* While "Hip" is the name of the language (Similar to Cuda for Nvidia).
+* Hip feels like modified Cuda (key words are different here).
+* While Cuda is only supported in Nvidia GPU's, Hip program can be run on both Nvidia and AMD GPU's. But there is catch, Hip can only do this because while compiling for the Nvidia GPU's it calls the NVCC. While only select AMD GPU's support Hip execution directly.
+* ROCm extends the support for these AMD GPU's by having optimized Hip kernels which are later called during the program execution. (Like how pytorch calls different lib based on the architecture).
+* Interesting feature called hipify which is used to change .cu files to .hip files.
+
+Tools Provided in ROCm : (They are mostly covered and wrapped nvidia tools)
+* ROCgbd
+* ROCProfiler (Nsigth like).
+
+Compatible GPU's :
+* Only the latest GPU's from AMD like RX 7900 series.
+* Data center cards based on the RX 7900 Series.
+* Recently added support for the AI Max Series APU's too. Also known as the Strix Halo.
+* Special Architectural Advantages of these AI Max chips are the New "Unified Memory Architecture" like the M - Series Processor of Apple Silicon.
+
+Recent Successful Implementation of these ROCm and How they affected the performance of the AMD GPU's :
+* Great improvement in AI inference by adding support to many models. Before this AMD GPU's used general ways to execute the AI Model by using Vulkan or similar thing. Now they are using specifics like nvidia Cuda, which results in a greater performance.
+* LM Studio, Hugging Face.	
