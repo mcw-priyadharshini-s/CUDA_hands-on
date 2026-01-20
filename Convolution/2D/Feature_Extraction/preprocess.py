@@ -22,5 +22,5 @@ with open("img_data.txt", "w") as f:
     f.write(f"{width} {height}\n")
     # Save the array as a long space-separated string
     img.flatten().tofile(f, sep=" ", format="%d")
-
+    
 print("Success! Converted image to 'img_data.txt'")
